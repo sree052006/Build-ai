@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import SeniorView from './components/SeniorView';
 import CaregiverView from './components/CaregiverView';
 import MobileView from './components/MobileView';
+import DigitalTwinView from './components/DigitalTwinView';
 import './index.css';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
         <nav className="nav-links">
           <Link to="/">🛡️ Edge Device (Home)</Link>
           <Link to="/caregiver" style={{ marginLeft: '1rem' }}>💻 Dispatch Dashboard</Link>
+          <Link to="/twin" style={{ marginLeft: '1rem', color: '#818cf8' }}>🧬 Digital Twin</Link>
           <Link to="/mobile/caretaker" target="_blank" style={{ marginLeft: '1rem', color: '#10b981' }}>📱 Caretaker Phone</Link>
           <Link to="/mobile/family" target="_blank" style={{ marginLeft: '1rem', color: '#3b82f6' }}>📱 Family Phone</Link>
         </nav>
@@ -19,6 +21,7 @@ function App() {
           <Routes>
             <Route path="/" element={<SeniorView />} />
             <Route path="/caregiver" element={<CaregiverView />} />
+            <Route path="/twin" element={<DigitalTwinView />} />
             <Route path="/mobile/:role" element={<MobileView />} />
           </Routes>
         </main>

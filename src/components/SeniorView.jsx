@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { db, ref, set, serverTimestamp } from '../firebase';
 import { analyzeSensorDataWithGemini } from '../gemini';
 import { makeEmergencyPhoneCall } from '../twilio';
+import { logFallEvent } from '../twinStore';
 import { Camera, ShieldCheck, ShieldAlert, Activity, PlaySquare, X } from 'lucide-react';
 
 export default function SeniorView() {
@@ -86,6 +87,9 @@ export default function SeniorView() {
      setStatus('Distress');
      setAlertReason(`ALERT! Fall Detected: ${reason}`);
      setShowAlert(true);
+
+     // Log to Digital Twin store for weekly report tracking
+     logFallEvent({ reason, severity: 9, location: 'monitored area' });
 
      // Write to Firebase - Escalation Logic Payload
      // Both caretake and family member must acknowledge

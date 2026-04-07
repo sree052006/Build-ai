@@ -1,4 +1,72 @@
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const GEMINI_API_KEY = "AIzaSyA5u3XpRjrQwF69BoO1T1VcZO_j7rRyiB4";
+
+/**
+ * Generates a natural-language weekly caregiver report using Gemini.
+ * Handles missing/empty data gracefully.
+ */
+export async function generateWeeklyReport({ events = [], baseline = {}, anomalies = [] }) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+  const fallCount = events.filter(e => e.type === 'fall').length;
+  const nearFallCount = events.filter(e => e.type === 'near_fall').length;
+  const nightFalls = events.filter(e => e.timeOfDay === 'night').length;
+  const avgSeverity = events.length
+    ? (events.reduce((s, e) => s + e.severity, 0) / events.length).toFixed(1)
+    : 'N/A';
+
+  const eventsSummary = events.length
+    ? events.map(e =>
+        `- [${new Date(e.timestamp).toLocaleDateString()} ${e.timeOfDay}] ${e.type.toUpperCase()} | Severity: ${e.severity}/10 | Location: ${e.location} | "${e.reason}"`
+      ).join('\n')
+    : 'No events recorded this week.';
+
+  const anomalySummary = anomalies.length
+    ? anomalies.map(a => `- ${a.type}: ${a.description}`).join('\n')
+    : 'No anomalies detected.';
+
+  const prompt = `You are Guardian AI, an elder safety system generating a weekly health report for a caregiver.
+
+## This Week's Data Summary:
+- Total falls: ${fallCount}
+- Near-falls: ${nearFallCount}
+- Night-time incidents: ${nightFalls}
+- Average severity: ${avgSeverity}/10
+- Most common location: ${baseline.mostCommonLocation || 'unknown'}
+- Most common time of day: ${baseline.mostCommonTimeOfDay || 'unknown'}
+
+## Individual Events:
+${eventsSummary}
+
+## Detected Anomalies:
+${anomalySummary}
+
+## Your Task:
+Write a concise, warm, and professional weekly health summary for the caregiver. Structure it as:
+1. **Overall Assessment** (1-2 sentences: good week / concerning week)
+2. **Key Incidents** (brief bullet list)  
+3. **Patterns Noticed** (time of day, location trends)
+4. **Risk Level** (Low / Medium / High / Critical)
+5. **Recommendations** (2-3 specific actionable suggestions for the caregiver)
+6. **Trend** (Improving / Stable / Deteriorating — with one-line reason)
+
+Keep the tone empathetic but clinical. If data is missing, note it gracefully. Limit to 300 words.`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+
+    if (!response.ok) throw new Error(`API ${response.status}`);
+    const data = await response.json();
+    return data.candidates[0].content.parts[0].text;
+  } catch (error) {
+    console.error('Weekly report generation failed:', error);
+    return `**Weekly Report — Offline Summary**\n\nThis week recorded ${fallCount} fall(s) and ${nearFallCount} near-fall(s). Average severity: ${avgSeverity}/10. ${anomalies.length} anomal${anomalies.length === 1 ? 'y' : 'ies'} detected.\n\n*AI summary unavailable — check Gemini API connection.*`;
+  }
+}
+
 
 export async function analyzeSensorDataWithGemini(base64Audio, base64Image) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
