@@ -102,24 +102,20 @@ AI-generated weekly caregiver report in Digital Twin view
 Dispatch Dashboard showing triggered alert with AI description
 
 ## Proof of Google AI Usage
-Attach screenshots in a `/proof` folder:
-
-![AI Proof](./proof/screenshot1.png)
+https://drive.google.com/drive/folders/1S1FPyg0tvfPyIfO_TJZ2ZNu-IDx4HYFR
 
 ---
 
 ## Screenshots 
 Add project screenshots:
-
-![Screenshot1](./assets/screenshot1.png)  
-![Screenshot2](./assets/screenshot2.png)
+https://drive.google.com/drive/folders/1InH9o7l6PgwdSXA8jWg0GKZd9FZEma0v
 
 ---
 
 ## Demo Video
-Upload your demo video to Google Drive and paste the shareable link here(max 3 minutes).
-[Watch Demo](#)
 
+[Watch Demo](#)
+https://drive.google.com/drive/folders/1InH9o7l6PgwdSXA8jWg0GKZd9FZEma0v
 ---
 
 ## Installation Steps
